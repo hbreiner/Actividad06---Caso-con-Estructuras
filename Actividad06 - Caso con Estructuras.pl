@@ -14,3 +14,34 @@ persona(ling_bouvier, _, selma_bouvier, []).
 % Relaciones
 padreDe(Padre, Hijo) :- persona(Padre, _, _, Hijos), member(Hijo, Hijos).
 madreDe(Madre, Hijo) :- persona(Hijo, _, Madre, _).
+
+abueloDe(Abuelo, Nieto) :- padreDe(Abuelo, Padre), padreDe(Padre, Nieto).
+abuelaDe(Abuela, Nieto) :- madreDe(Abuela, Padre), padreDe(Padre, Nieto).
+
+nieto_nietaDe(Nieto, Abuelo) :- abueloDe(Abuelo, Nieto).
+nieto_nietaDe(Nieto, Abuela) :- abuelaDe(Abuela, Nieto).
+
+hermano_hermanaDe(Hermano1, Hermano2) :-
+    persona(Hermano1, Padre, Madre, _),
+    persona(Hermano2, Padre, Madre, _),
+    Hermano1 \= Hermano2.
+
+tio_tiaDe(Tio, Sobrino) :-
+    hermano_hermanaDe(Tio, Padre),
+    padreDe(Padre, Sobrino).
+
+tio_tiaDe(Tia, Sobrino) :-
+    hermano_hermanaDe(Tia, Madre),
+    madreDe(Madre, Sobrino).
+
+sobrino_sobrinaDe(Sobrino, Tio) :- tio_tiaDe(Tio, Sobrino).
+
+primo_primaDe(Primo1, Primo2) :-
+    padreDe(P1, Primo1),
+    padreDe(P2, Primo2),
+    hermano_hermanaDe(P1, P2).
+
+primo_primaDe(Primo1, Primo2) :-
+    madreDe(M1, Primo1),
+    madreDe(M2, Primo2),
+    hermano_hermanaDe(M1, M2).
